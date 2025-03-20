@@ -146,7 +146,7 @@
   <script>
     async function fetchDriverBookings() {
       try {
-        const res = await fetch('http://localhost:4040/booking/getDriverBooking', {
+        const res = await fetch('https://car-booking-92e3.onrender.com/booking/getDriverBooking', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -166,7 +166,6 @@
         div.className = 'booking-card';
 
         div.innerHTML = `
-          <p><strong>User Name:</strong> ${booking.userId?.name || 'N/A'}</p>
           <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
           <p><strong>Drop Location:</strong> ${booking.dropoffLocation}</p>
           <p><strong>Date:</strong> ${new Date(booking.bookingTime).toLocaleString()}</p>
@@ -188,7 +187,7 @@
 
     async function updateStatus(bookingId, status) {
       try {
-        const res = await fetch(`http://localhost:4040/booking/update/${bookingId}`, {
+        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/update/${bookingId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

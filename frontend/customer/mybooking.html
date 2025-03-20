@@ -150,7 +150,7 @@
 
     async function fetchBookings() {
       try {
-        const res = await fetch("http://localhost:4040/booking/getUserBooking", {
+        const res = await fetch("https://car-booking-92e3.onrender.com/booking/getUserBooking", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -196,7 +196,7 @@
 
     async function cancelBooking(bookingId) {
       try {
-        const res = await fetch(`http://localhost:4040/booking/delete/${bookingId}`, {
+        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/delete/${bookingId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`
@@ -228,7 +228,7 @@
       if (newDropoff) updatedData.dropoffLocation = newDropoff;
 
       try {
-        const res = await fetch(`http://localhost:4040/booking/update/${bookingId}`, {
+        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/update/${bookingId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

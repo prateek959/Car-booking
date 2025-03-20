@@ -194,7 +194,7 @@
 
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:4040/car/create", {
+        const res = await fetch("https://car-booking-92e3.onrender.com/car/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

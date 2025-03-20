@@ -143,7 +143,7 @@
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("http://localhost:4040/location/get", {
+        const res = await fetch("https://car-booking-92e3.onrender.com/location/get", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -193,7 +193,7 @@
       const status = "pending"; // Default booking status
 
       try {
-        const res = await fetch(`http://localhost:4040/booking/create/${carId}`, {
+        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/create/${carId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
