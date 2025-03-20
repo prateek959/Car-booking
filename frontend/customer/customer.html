@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer | Car Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f3f4f6;
+    }
+
+    nav {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+
+    nav .logo {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .hero {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      padding: 60px 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 18px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .card p {
+      color: #555;
+    }
+
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .car-card {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .car-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .car-card h3 {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .cta a {
+      padding: 12px 30px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .cta a:hover {
+      background-color: #1d5ed8;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #e5e7eb;
+      color: #444;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+
+    #profile-section {
+      display: none;
+      padding: 40px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    #profile-section form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #profile-section form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #profile-section form button {
+      padding: 10px 20px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">🚗 Car Booking</div>
+    <ul>
+      <li><a href="customer.html">Home</a></li>
+      <li><a href="mybooking.html">My Bookings</a></li>
+      <li><a href="AvailableCar.html">Available Cars</a></li>
+      <li><a href="#" onclick="showProfile()">Profile</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Welcome to Car Booking</h1>
+      <p>Book your ride easily and quickly — wherever you are!</p>
+    </div>
+
+    <div class="section">
+      <h2>How It Works</h2>
+      <div class="card">
+        <p>1. Browse available cars</p>
+        <p>2. Select your preferred vehicle</p>
+        <p>3. Confirm and book in just a few clicks</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Popular Cars</h2>
+      <div class="cars-grid">
+        <div class="car-card">
+          <img src="https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg" alt="Car 1">
+          <h3>Honda Civic</h3>
+        </div>
+        <div class="car-card">
+          <img src="https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg" alt="Car 2">
+          <h3>Hyundai i20</h3>
+        </div>
+        <div class="car-card">
+          <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg" alt="Car 3">
+          <h3>Toyota Innova</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <a href="AvailableCar.html">Book Now</a>
+    </div>
+  </div>
+
+  <!-- Profile Section -->
+  <div id="profile-section">
+    <h2>Your Profile</h2>
+    <form onsubmit="updateProfile(event)">
+      <label>Name:</label>
+      <input type="text" id="name" required />
+      <label>Email:</label>
+      <input type="email" id="email" disabled />
+      <label>Phone:</label>
+      <input type="text" id="phone" />
+      <label>Location:</label>
+      <input type="text" id="location" />
+      <button type="submit">Update Profile</button>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2025 Car Booking Platform. All rights reserved.
+  </footer>
+
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../index.html'; 
+    }
+
+    async function showProfile() {
+      document.getElementById("profile-section").style.display = "block";
+      const token = localStorage.getItem("token");
+
+      try {
+        const res = await fetch("http://localhost:4040/user/get", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        document.getElementById("name").value = data.name || "";
+        document.getElementById("email").value = data.email || "";
+        document.getElementById("phone").value = data.phone || "";
+        document.getElementById("location").value = data.location || "";
+
+      } catch (err) {
+        alert("Failed to load profile data.");
+      }
+    }
+
+    async function updateProfile(e) {
+      e.preventDefault();
+      const token = localStorage.getItem("token");
+      const payload = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        location: document.getElementById("location").value
+      };
+
+      try {
+        const res = await fetch("http://localhost:4040/user/update", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Profile updated successfully!");
+          document.getElementById("profile-section").style.display = "none";
+        } else {
+          alert(data.message || "Failed to update.");
+        }
+      } catch (err) {
+        alert("Error updating profile.");
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Bookings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    nav {
+      background-color: #2f3640;
+      padding: 20px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .booking-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .booking-card p {
+      margin: 8px 0;
+    }
+
+    .btn-group {
+      margin-top: 15px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .accept-btn {
+      background-color: #00b894;
+    }
+
+    .accept-btn:hover {
+      background-color: #019870;
+    }
+
+    .decline-btn {
+      background-color: #d63031;
+    }
+
+    .decline-btn:hover {
+      background-color: #b02424;
+    }
+
+    .complete-btn {
+      background-color: #0984e3;
+    }
+
+    .complete-btn:hover {
+      background-color: #0665b3;
+    }
+
+    .status-tag {
+      padding: 4px 10px;
+      background: #dfe6e9;
+      border-radius: 4px;
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 13px;
+      color: #2d3436;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="logo">🚗 Driver Dashboard</div>
+    <ul>
+      <li><a href="driver.html">Home</a></li>
+      <li><a href="createRide.html">Create Ride</a></li>
+      <li><a href="driverBookings.html">See Bookings</a></li>
+      <li><a href="myRides.html">My Rides</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2>Your Booking</h2>
+    <div id="bookingsList">Loading...</div>
+  </div>
+
+  <script>
+    async function fetchDriverBookings() {
+      try {
+        const res = await fetch('http://localhost:4040/booking/getDriverBooking', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        const booking = await res.json();
+        const list = document.getElementById('bookingsList');
+        list.innerHTML = '';
+
+        if (!booking || !booking._id) {
+          list.innerHTML = '<p>No booking found.</p>';
+          return;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'booking-card';
+
+        div.innerHTML = `
+          <p><strong>User Name:</strong> ${booking.userId?.name || 'N/A'}</p>
+          <p><strong>Pickup Location:</strong> ${booking.pickupLocation}</p>
+          <p><strong>Drop Location:</strong> ${booking.dropoffLocation}</p>
+          <p><strong>Date:</strong> ${new Date(booking.bookingTime).toLocaleString()}</p>
+          <p><strong>Status:</strong> <span class="status-tag">${booking.status}</span></p>
+          <div class="btn-group">
+           <button class="btn accept-btn" onclick="updateStatus('${booking._id}', 'accepted')">Accept</button>
+<button class="btn decline-btn" onclick="updateStatus('${booking._id}', 'declined')">Decline</button>
+<button class="btn complete-btn" onclick="updateStatus('${booking._id}', 'completed')">Complete</button>
+
+          </div>
+        `;
+        list.appendChild(div);
+
+      } catch (err) {
+        console.error(err);
+        alert('Failed to fetch bookings');
+      }
+    }
+
+    async function updateStatus(bookingId, status) {
+      try {
+        const res = await fetch(`http://localhost:4040/booking/update/${bookingId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ status })
+        });
+
+        const data = await res.json();
+        alert(data.msg || 'Status updated');
+        fetchDriverBookings(); // Refresh UI
+      } catch (err) {
+        console.error(err);
+        alert('Failed to update booking');
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../index.html';
+    }
+
+    // Initial call
+    fetchDriverBookings();
+  </script>
+
+</body>
+
+</html>

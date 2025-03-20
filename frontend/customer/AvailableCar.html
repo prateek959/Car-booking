@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Available Cars | Car Booking</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+    }
+
+    nav {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+
+    nav .logo {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 30px 0 10px;
+      color: #333;
+    }
+
+    .car-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      padding: 20px 40px;
+    }
+
+    .car-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .car-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .car-card h3 {
+      margin: 10px 0;
+      font-size: 20px;
+      color: #444;
+    }
+
+    .car-card p {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+
+    .book-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .book-btn:hover {
+      background-color: #1a5bd1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #e5e7eb;
+      color: #444;
+      margin-top: 30px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">🚗 Car Booking</div>
+    <ul>
+      <li><a href="customer.html">Home</a></li>
+      <li><a href="mybooking.html">My Bookings</a></li>
+      <li><a href="AvailableCar.html">Available Cars</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <h2>Available Cars for Booking</h2>
+  <div class="car-container" id="carContainer">
+    <!-- Cars will be injected here -->
+  </div>
+
+  <footer>
+    &copy; 2025 Car Booking Platform. All rights reserved.
+  </footer>
+
+  <script>
+    const carImages = [
+      "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      "https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg",
+      "https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg",
+      "https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg",
+      "https://images.pexels.com/photos/305070/pexels-photo-305070.jpeg",
+      "https://images.pexels.com/photos/1149137/pexels-photo-1149137.jpeg",
+      "https://images.pexels.com/photos/1007415/pexels-photo-1007415.jpeg",
+      "https://images.pexels.com/photos/305070/pexels-photo-305070.jpeg",
+      "https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg",
+      "https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg"
+    ];
+
+    async function fetchCars() {
+      const token = localStorage.getItem("token");
+
+      try {
+        const res = await fetch("http://localhost:4040/location/get", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        displayCars(data);
+      } catch (err) {
+        alert("Failed to load available cars.");
+        console.error(err);
+      }
+    }
+
+    function displayCars(cars) {
+      const container = document.getElementById("carContainer");
+      container.innerHTML = "";
+
+      cars.forEach(car => {
+        const randomImg = carImages[Math.floor(Math.random() * carImages.length)];
+        const card = document.createElement("div");
+        card.className = "car-card";
+
+        card.innerHTML = `
+          <img src="${randomImg}" alt="Car Image" />
+          <h3>${car.model}</h3>
+          <p><strong>Car No:</strong> ${car.registrationNumber}</p>
+          <p><strong>Seats:</strong> ${car.capacity}</p>
+          <p><strong>Location:</strong> ${car.currentLocation}</p>
+          <p><strong>Price:</strong> ₹${car.price} / km</p>
+          <p><strong>Available:</strong> ${car.available ? 'Yes' : 'No'}</p>
+          <button class="book-btn" onclick="bookRide('${car._id}')">Book Ride</button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    async function bookRide(carId) {
+      const token = localStorage.getItem("token");
+
+      const pickupLocation = prompt("Enter Pickup Location:");
+      if (!pickupLocation) return alert("Pickup location is required.");
+
+      const dropoffLocation = prompt("Enter Dropoff Location:");
+      if (!dropoffLocation) return alert("Dropoff location is required.");
+
+      const status = "pending"; // Default booking status
+
+      try {
+        const res = await fetch(`http://localhost:4040/booking/create/${carId}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            pickupLocation,
+            dropoffLocation,
+            status
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Booking successful!");
+        } else {
+          alert(data.message || "Failed to book.");
+        }
+      } catch (err) {
+        alert("Error while booking.");
+        console.error(err);
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "../index.html";
+    }
+
+    window.onload = fetchCars;
+  </script>
+</body>
+</html>

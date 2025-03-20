@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup | Car Booking</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-box {
+      background-color: #ffffff;
+      padding: 40px 35px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .signup-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    .signup-box input,
+    .signup-box select {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: 0.3s ease;
+    }
+
+    .signup-box input:focus,
+    .signup-box select:focus {
+      outline: none;
+      border-color: #6a11cb;
+      box-shadow: 0 0 5px rgba(106, 17, 203, 0.3);
+    }
+
+    .signup-box button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .signup-box button:hover {
+      background-color: #1a5ed0;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: 500;
+    }
+
+    .success-msg {
+      color: green;
+    }
+
+    .error-msg {
+      color: red;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .link a {
+      color: #555;
+      text-decoration: none;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-box">
+    <h2>Create Your Account</h2>
+    <form id="signupForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required pattern="[0-9]{10}" />
+      <input type="password" id="password" placeholder="Password" required />
+      <select id="role" required>
+        <option value="">Select Role</option>
+        <option value="customer">Customer</option>
+        <option value="driver">Driver</option>
+      </select>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div id="message" class="message"></div>
+    <div class="link">
+      Already have an account? <a href="index.html">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      try {
+        const res = await fetch('http://localhost:4040/user/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, email, phone, password, role })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          message.innerHTML = `<p class="success-msg">Signup successful! Redirecting to login...</p>`;
+          form.reset();
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 1000);
+        } else {
+          message.innerHTML = `<p class="error-msg">${data.msg || 'Signup failed'}</p>`;
+        }
+      } catch (error) {
+        console.log(error);
+        message.innerHTML = `<p class="error-msg">Something went wrong!</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

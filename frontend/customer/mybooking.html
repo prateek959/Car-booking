@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Bookings | Car Booking</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6fa;
+    }
+
+    nav {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    nav ul li a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .container h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .summary {
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .summary p {
+      font-size: 18px;
+      color: #444;
+    }
+
+    .booking-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .booking-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .booking-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .booking-card h4 {
+      color: #2c3e50;
+    }
+
+    .booking-card p {
+      margin: 8px 0;
+      color: #555;
+    }
+
+    .booking-card button {
+      margin-top: 10px;
+      margin-right: 10px;
+      padding: 6px 12px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .booking-card button:hover {
+      background-color: #1a5ed9;
+    }
+
+    .no-bookings {
+      text-align: center;
+      font-size: 18px;
+      color: #777;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">🚗 Car Booking</div>
+    <ul>
+      <li><a href="customer.html">Home</a></li>
+      <li><a href="mybooking.html">My Bookings</a></li>
+      <li><a href="AvailableCar.html">Available Cars</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <h2>My Bookings</h2>
+    <div class="summary" id="summary">
+      <p>Total Bookings: <span id="totalBookings">0</span></p>
+    </div>
+    <div class="booking-list" id="bookingList">
+      <!-- Bookings will appear here -->
+    </div>
+    <div class="no-bookings" id="noBookings" style="display: none;">
+      You haven't made any bookings yet.
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    async function fetchBookings() {
+      try {
+        const res = await fetch("http://localhost:4040/booking/getUserBooking", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        console.log("Fetched booking data:", data);
+
+        const bookings = Array.isArray(data) ? data : [data];
+
+        const bookingList = document.getElementById("bookingList");
+        bookingList.innerHTML = "";
+
+        if (res.ok && bookings.length > 0) {
+          document.getElementById("totalBookings").textContent = bookings.length;
+
+          bookings.forEach(booking => {
+            const card = document.createElement("div");
+            card.className = "booking-card";
+
+            card.innerHTML = `
+              <p><strong>Driver Name:</strong> ${booking.driverId?.name || 'N/A'}</p>
+              <p><strong>Pick-Up:</strong> ${booking.pickupLocation}</p>
+              <p><strong>Drop-Off:</strong> ${booking.dropoffLocation}</p>
+              <p><strong>Booking Time:</strong> ${new Date(booking.bookingTime).toLocaleString()}</p>
+              <p><strong>Status:</strong> ${booking.status}</p>
+              <button onclick="cancelBooking('${booking._id}')">❌ Cancel Ride</button>
+              <button onclick="updateBooking('${booking._id}')">✏️ Update Ride</button>
+            `;
+
+            bookingList.appendChild(card);
+          });
+
+        } else {
+          document.getElementById("noBookings").style.display = "block";
+        }
+
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        document.getElementById("noBookings").style.display = "block";
+      }
+    }
+
+    async function cancelBooking(bookingId) {
+      try {
+        const res = await fetch(`http://localhost:4040/booking/delete/${bookingId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (res.ok) {
+          alert("Ride canceled successfully!");
+          fetchBookings();
+        } else {
+          alert("Failed to cancel ride.");
+        }
+      } catch (err) {
+        console.error("Error canceling booking:", err);
+      }
+    }
+
+    async function updateBooking(bookingId) {
+      const newPickup = prompt("Enter new Pickup Location (leave blank to keep current):");
+      const newDropoff = prompt("Enter new Drop-off Location (leave blank to keep current):");
+
+      if (!newPickup && !newDropoff) {
+        alert("No changes provided. Update cancelled.");
+        return;
+      }
+
+      const updatedData = {};
+      if (newPickup) updatedData.pickupLocation = newPickup;
+      if (newDropoff) updatedData.dropoffLocation = newDropoff;
+
+      try {
+        const res = await fetch(`http://localhost:4040/booking/update/${bookingId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(updatedData)
+        });
+
+        if (res.ok) {
+          alert("Ride updated successfully!");
+          fetchBookings();
+        } else {
+          alert("Failed to update ride.");
+        }
+      } catch (err) {
+        console.error("Error updating booking:", err);
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "../index.html";
+    }
+
+    fetchBookings();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Ride | Driver</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: #2f3640;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .form-container {
+      background-color: white;
+      max-width: 500px;
+      margin: 50px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+      margin-bottom: 25px;
+      color: #2f3640;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2f3640;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #1e272e;
+    }
+
+    .message {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav ul {
+        flex-direction: column;
+        margin-top: 10px;
+        width: 100%;
+      }
+
+      nav ul li a {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">🚘 Driver Dashboard</div>
+    <ul>
+      <li><a href="driver.html">Home</a></li>
+      <li><a href="createRide.html">Create Ride</a></li>
+      <li><a href="driverBookings.html">See Bookings</a></li>
+      <li><a href="myRides.html">My Rides</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="form-container">
+    <h2>Create Your Ride</h2>
+    <form id="rideForm">
+      <div class="form-group">
+        <label for="model">Car Model</label>
+        <input type="text" id="model" required />
+      </div>
+      <div class="form-group">
+        <label for="registrationNumber">Registration Number</label>
+        <input type="text" id="registrationNumber" required />
+      </div>
+      <div class="form-group">
+        <label for="capacity">Seating Capacity</label>
+        <input type="number" id="capacity" required />
+      </div>
+      <div class="form-group">
+        <label for="available">Available</label>
+        <select id="available" required>
+          <option value="">-- Select --</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="currentLocation">Current Location</label>
+        <input type="text" id="currentLocation" required />
+      </div>
+      <div class="form-group">
+        <label for="price">Price (₹)</label>
+        <input type="number" id="price" required />
+      </div>
+      <button type="submit">Submit Ride</button>
+      <div class="message" id="message"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('rideForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        model: document.getElementById('model').value,
+        registrationNumber: document.getElementById('registrationNumber').value,
+        capacity: document.getElementById('capacity').value,
+        available: document.getElementById('available').value,
+        currentLocation: document.getElementById('currentLocation').value,
+        price: document.getElementById('price').value
+      };
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:4040/car/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (res.status === 201) {
+          message.style.color = "green";
+          message.innerText = result.msg;
+          form.reset();
+        } else {
+          message.style.color = "red";
+          message.innerText = result.msg || "Failed to create ride.";
+        }
+      } catch (err) {
+        message.style.color = "red";
+        message.innerText = "Something went wrong!";
+        console.error(err);
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "../login.html";
+    }
+  </script>
+
+</body>
+</html>
