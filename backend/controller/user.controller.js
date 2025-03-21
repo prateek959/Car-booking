@@ -86,7 +86,8 @@ const updateDetail = async(req, res)=>{
 const getData = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email });
-        const pattern = user.location;
+        // const pattern = user.location;
+        const pattern = req.query.location || user.location;
 
         const data = await Car.find({
             currentLocation: { $regex: pattern, $options: 'i' },
