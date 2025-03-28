@@ -262,13 +262,13 @@
       localStorage.clear();
       window.location.href = '../index.html'; 
     }
-
+    const API = "https://car-booking-92e3.onrender.com";
     async function showProfile() {
       document.getElementById("profile-section").style.display = "block";
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("https://car-booking-92e3.onrender.com/user/get", {
+        const res = await fetch(`${API}/user/get`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -296,7 +296,7 @@
       };
 
       try {
-        const res = await fetch("https://car-booking-92e3.onrender.com/user/update", {
+        const res = await fetch(`${API}/user/update`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

@@ -119,7 +119,7 @@
   <script>
     const form = document.getElementById('signupForm');
     const message = document.getElementById('message');
-
+    const API = "https://car-booking-92e3.onrender.com";
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -130,7 +130,7 @@
       const role = document.getElementById('role').value;
 
       try {
-        const res = await fetch('https://car-booking-92e3.onrender.com/user/register', {
+        const res = await fetch(`${API}/user/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

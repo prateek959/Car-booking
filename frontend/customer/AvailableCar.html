@@ -44,6 +44,28 @@
       color: #333;
     }
 
+    .search-box {
+      text-align: center;
+      margin: 10px 0 30px;
+    }
+
+    .search-box input {
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .search-box button {
+      padding: 10px 20px;
+      background-color: #2575fc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
     .car-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -117,6 +139,12 @@
   </nav>
 
   <h2>Available Cars for Booking</h2>
+
+  <div class="search-box">
+    <input type="text" id="locationInput" placeholder="Enter your location to search" />
+    <button onclick="searchByLocation()">Search</button>
+  </div>
+
   <div class="car-container" id="carContainer">
     <!-- Cars will be injected here -->
   </div>
@@ -134,16 +162,15 @@
       "https://images.pexels.com/photos/305070/pexels-photo-305070.jpeg",
       "https://images.pexels.com/photos/1149137/pexels-photo-1149137.jpeg",
       "https://images.pexels.com/photos/1007415/pexels-photo-1007415.jpeg",
-      "https://images.pexels.com/photos/305070/pexels-photo-305070.jpeg",
       "https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg",
       "https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg"
     ];
-
+    const API = "https://car-booking-92e3.onrender.com";
     async function fetchCars() {
       const token = localStorage.getItem("token");
 
       try {
-        const res = await fetch("https://car-booking-92e3.onrender.com/location/get", {
+        const res = await fetch(`${API}/location/get`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -160,6 +187,11 @@
     function displayCars(cars) {
       const container = document.getElementById("carContainer");
       container.innerHTML = "";
+
+      if (!cars.length) {
+        container.innerHTML = "<p style='grid-column: 1 / -1; text-align:center;'>No cars found for this location.</p>";
+        return;
+      }
 
       cars.forEach(car => {
         const randomImg = carImages[Math.floor(Math.random() * carImages.length)];
@@ -193,7 +225,7 @@
       const status = "pending"; // Default booking status
 
       try {
-        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/create/${carId}`, {
+        const res = await fetch(`${API}/booking/create/${carId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -214,6 +246,35 @@
         }
       } catch (err) {
         alert("Error while booking.");
+        console.error(err);
+      }
+    }
+
+    async function searchByLocation() {
+      const token = localStorage.getItem("token");
+      const pattern = document.getElementById("locationInput").value.trim();
+
+      if (!pattern) {
+        alert("Please enter a location to search.");
+        return;
+      }
+
+      try {
+        const encodedPattern = pattern;
+        const res = await fetch(`${API}/location/get?pattern=${encodedPattern}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          displayCars(data);
+        } else {
+          alert(data.msg || "Search failed.");
+        }
+      } catch (err) {
+        alert("Error while searching for cars.");
         console.error(err);
       }
     }

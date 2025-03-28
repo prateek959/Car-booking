@@ -144,9 +144,10 @@
   </div>
 
   <script>
+     const API = "https://car-booking-92e3.onrender.com";
     async function fetchDriverBookings() {
       try {
-        const res = await fetch('https://car-booking-92e3.onrender.com/booking/getDriverBooking', {
+        const res = await fetch(`${API}/booking/getDriverBooking`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -187,7 +188,7 @@
 
     async function updateStatus(bookingId, status) {
       try {
-        const res = await fetch(`https://car-booking-92e3.onrender.com/booking/update/${bookingId}`, {
+        const res = await fetch(`${API}/booking/update/${bookingId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

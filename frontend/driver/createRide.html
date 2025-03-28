@@ -179,7 +179,7 @@
   <script>
     const form = document.getElementById('rideForm');
     const message = document.getElementById('message');
-
+    const API = "https://car-booking-92e3.onrender.com";
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -194,7 +194,7 @@
 
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("https://car-booking-92e3.onrender.com/car/create", {
+        const res = await fetch(`${API}/car/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
