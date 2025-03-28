@@ -115,7 +115,3 @@ frontend/
 1. Open the `frontend` directory in your preferred code editor or IDE.
 2. Use a live server extension or serve the files using a local server to view the pages in your browser.
 3. Navigate to `index.html` to login or `signup.html` to create a new account.
-
-## License
-
-This project is licensed under the MIT License.
