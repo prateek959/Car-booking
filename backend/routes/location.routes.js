@@ -4,6 +4,6 @@ import { getData } from '../controller/user.controller.js';
 
 const locationRouter = express.Router();
 
-locationRouter.get('/get',checkToken,getData);
+locationRouter.get('/get?',checkToken,getData);
 
 export default locationRouter;
